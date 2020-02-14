@@ -1,7 +1,9 @@
-root{
+root {
   font-size: 10px;
 }
+
 h1{
   font-family: 'Cormorant Garamond', serif;
   font-size: 1rem;
+  font-weight: 400;
 }
