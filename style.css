@@ -4,7 +4,8 @@ body {
 
 h1{
   font-family: 'Cormorant Garamond', serif;
-  font-size: 20em;
+  font-size: 15em;
   font-weight: 300;
+  line-height: 1rem;
   padding-left: 100px;
 }
