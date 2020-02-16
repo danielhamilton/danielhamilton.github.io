@@ -11,16 +11,8 @@
    Base styles: opinionated defaults
    ========================================================================== */
 
-html {
-  color: #222;
-  font-size: 1em;
-  line-height: 1.4;
 
-}
 
-.wrapper {
-  margin: 40px;
-}
 
 /*
  * Remove text-shadow in selection highlight:
