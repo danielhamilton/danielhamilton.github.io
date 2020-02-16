@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <title></title>
     <meta name="description" content="">
-    <!-- Place favicon.ico in the root directory -->
     <link rel="stylesheet" href="css/main.css">
     <script type="text/javascript" src="http://livejs.com/live.js"></script>
 </head>
@@ -18,10 +17,7 @@
     <script src="https://d3js.org/d3.v4.js"></script>
 
     <div class="wrapper">
-        <h2>R&P</h2>
-
-        <!-- Create a div where the graph will take place -->
-
+        <h2>Person-to-Person Relationships</h2>
         <div id="my_dataviz"></div>
 
     </div>
@@ -30,12 +26,12 @@
         // set the dimensions and margins of the graph
         var margin = {
                 top: 10,
-                right: 50,
-                bottom: 80,
-                left: 60
+                right: 40,
+                bottom: 60,
+                left: 40
             },
-            width = 1200 - margin.left - margin.right,
-            height = 700 - margin.top - margin.bottom;
+            width = 1400 - margin.left - margin.right,
+            height = 800 - margin.top - margin.bottom;
 
         // append the svg object to the body of the page
         var svg = d3.select("#my_dataviz")
@@ -180,16 +176,6 @@
                 })
         })
     </script>
-
-
-    <!-- Scripts -->
-
-    <script src="js/plugins.js"></script>
-
-
-
-
-
 </body>
 
 </html>
