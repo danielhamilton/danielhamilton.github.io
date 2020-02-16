@@ -697,7 +697,17 @@
 "id": "S Bocs"
 }
 ],
+
+
+
+
+
 "links": [
+  {
+  "source": "A Chifolleau",
+  "target": "S Bocs",
+  "value": 1
+  },
 {
 "source": "A Besnard",
 "target": "M Ardisson",
