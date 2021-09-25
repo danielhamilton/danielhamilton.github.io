@@ -1,0 +1,92 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Sora:wght@100;200;300;400;500;600;700;800&display=swap");
+
+:root {
+	font-size: 16px;
+	box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+	--text-size-xs: 0.56rem;
+	--text-size-sm: 0.75rem;
+	--text-size-md: 1rem;
+	--text-size-lg: 1.33rem;
+	--text-size-xl: 1.78rem;
+	--text-size-2xl: 2.37rem;
+	--text-size-3xl: 3.16rem;
+	--text-size-4xl: 4.21rem;
+	--text-size-5xl: 5.61rem;
+
+	/*GRAYS*/
+	--color-black: #000000;
+	--color-gray190: #201f1e;
+	--color-gray150: #3b3a39;
+	--color-gray110: #8a8886;
+	--color-gray70: #bebbb8;
+	--color-gray30: #edebe9;
+	 /*COLORS*/
+
+	--color-mm-brave-stranger-seafoam: #B7E3E4;
+	--color-mm-brave-stranger-tomato: #F03F35;
+	--color-mm-carnivale-blue: #005397;
+	--color-mm-carnivale-salmon: #FF8788;
+	--color-mm-hidden-garden-green: #9AB79A;
+	--color-mm-hidden-garden-forest: #094436;
+	--color-mm-hidden-garden-cream: #D1E1CB;
+	--color-mm-hidden-garden-lemon: #FDFF50;
+
+	--color-pri: #133366;
+	--color-sec: #c93c1f;
+	--color-ter: #f2d861;
+	--color-fall-teal: #02929e;
+	--color-fall-choc: #de4123;
+
+	--ms-color-yellow10: #fce100;
+	--ms-color-red-orange10: #da3b01;
+	--ms-color-cyan10: #00b7c3;
+	--ms-color-cyan30: #005b70;
+	--ms-color-cyan-blue20: #004e8c;
+	--ms-color-magenta-pink10: #e3008c;
+  }
+  
+  body{
+	background-color: var(--color-mm-brave-stranger-seafoam);
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Sora", sans-serif;
+  font-weight: 800;
+}
+
+h1 {
+font-size: var(--text-size-2xl);
+color: var(--color-mm-brave-stranger-tomato);
+}
+
+.container {
+  margin: 20px;
+  padding: 20px;
+  
+}
+
+li{
+	line-height: 1.4rem;	
+}
+ul {
+	list-style: none;
+  }
+ul li::before {
+	content: "\2022";
+	color: var(--color-mm-hidden-garden-lemon);
+	display: inline-block; 
+	width: 1em;
+	margin-left: -2.25em;
+  }
+ 
+  a:link, a:visited, a:active {
+	color: var(--color-mm-carnivale-blue);
+  }
+  a:hover {
+	color: var(--color-mm-brave-stranger-tomato);
+  }
+  
