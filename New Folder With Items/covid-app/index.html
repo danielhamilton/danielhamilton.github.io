@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+
+</head>
+
+<body>
+
+    <div id="output"><h1>Hey There</h1></div>
+    
+    <p>
+        <input type="text" id="newTxt" onchange="upText()">
+    </p>
+      
+
+<script>
+    var output = document.getElementById('output');  
+   
+    function upText(){
+        var holder = document.getElementById('newTxt').value;
+        output.innerText = holder;
+    }
+      
+</script>
+ 
+    
+    
+    
+    
+    
+    
+</body>
+
+</html>
