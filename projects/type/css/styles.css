@@ -359,3 +359,12 @@ small,
 
 
 */
+
+
+a:link, a:visited, a:active {
+	color: var(--color-mm-carnivale-blue);
+  }
+  a:hover {
+	color: var(--color-mm-brave-stranger-tomato);
+  }
+  
