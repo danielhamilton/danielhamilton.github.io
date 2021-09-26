@@ -59,7 +59,7 @@ h5 {
 }
 
 h1 {
-font-size: var(--text-size-2xl);
+font-size: var(--text-size-xl);
 color: var(--color-mm-brave-stranger-tomato);
 }
 
@@ -70,6 +70,7 @@ color: var(--color-mm-brave-stranger-tomato);
 }
 
 li{
+	font-size: var(--text-size-sm);
 	line-height: 1.4rem;	
 }
 ul {
