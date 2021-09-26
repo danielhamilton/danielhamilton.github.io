@@ -1,14 +1,15 @@
-const adoption = 97
-const growth = 94.8
-const growthRate = 39.6
-const stickiness = 78.3
-const pes = 90
+const adoption = 87
+const growth = 84.8
+const growthRate = 25.6
+const stickiness = 64.3
+const pes = 76
 
 Highcharts.chart('container', {
 	chart: {
 		polar: true,
-		spacing: [20, 0, -40, 30],
+		spacing: [40, 0, -60, 30],
 		styledMode: true
+
 	},
 	credits: false,
 	exporting: {
