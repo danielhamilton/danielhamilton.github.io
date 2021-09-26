@@ -7,7 +7,7 @@ const pes = 76
 Highcharts.chart('container', {
 	chart: {
 		polar: true,
-		spacing: [40, 0, -60, 30],
+		spacing: [40, 0, -70, 30],
 		styledMode: true
 
 	},
