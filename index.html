@@ -11,7 +11,7 @@
         --accent-color: #64ffda;
         --line-color: rgba(100, 255, 218, 0.3);
         --dot-color: rgba(100, 255, 218, 0.8);
-        --card-bg: rgba(16, 16, 24, 0.8);
+        --card-bg: rgba(40, 40, 55, 0.3);
         --timeline-width: 2px;
       }
 
@@ -158,8 +158,8 @@
       .dot::before {
         content: "";
         position: absolute;
-        width: 24px;
-        height: 24px;
+        width: 74px;
+        height: 74px;
         border: 1px solid var(--line-color);
         border-radius: 50%;
         top: 50%;
@@ -207,7 +207,7 @@
         position: absolute;
         font-size: 0.6rem;
         color: var(--accent-color);
-        background: rgba(16, 16, 24, 0.9);
+        background: rgba(16, 16, 74, 0.9);
         padding: 2px 6px;
         border-radius: 2px;
         border: 1px solid rgba(100, 255, 218, 0.2);
@@ -297,6 +297,39 @@
         font-size: 0.5rem;
         color: rgba(100, 255, 218, 0.15);
         z-index: 0;
+      }
+
+      /* Timeline terminator styles */
+      .timeline-terminator {
+        position: relative;
+        margin-top: 80px;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+      }
+
+      .timeline-terminator.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .terminator-dot {
+        width: 20px;
+        height: 20px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        margin: 0 auto;
+        position: relative;
+        box-shadow: 0 0 20px rgba(100, 255, 218, 0.8);
+      }
+
+      .terminator-text {
+        margin-top: 20px;
+        color: var(--accent-color);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
       }
     </style>
   </head>
@@ -422,7 +455,7 @@
         <div class="timeline-event">
           <div class="event-content">
             <div class="event-tag">COG-471</div>
-            <div class="event-date">01.07.2024</div>
+            <div class="event-date">01.07.2074</div>
             <h3 class="event-title">Bidirectional Neural Interface</h3>
             <p class="event-description">
               First high-bandwidth neural interface allowing both reading and
@@ -440,7 +473,7 @@
         <div class="timeline-event">
           <div class="event-content">
             <div class="event-tag">MAT-603</div>
-            <div class="event-date">03.28.2024</div>
+            <div class="event-date">03.28.2074</div>
             <h3 class="event-title">Programmable Matter</h3>
             <p class="event-description">
               Development of microscale robots capable of collective
@@ -458,7 +491,7 @@
         <div class="timeline-event">
           <div class="event-content">
             <div class="event-tag">ENR-892</div>
-            <div class="event-date">06.12.2024</div>
+            <div class="event-date">06.12.2074</div>
             <h3 class="event-title">Fusion Breakthrough</h3>
             <p class="event-description">
               First sustained fusion reaction producing net positive energy over
@@ -476,7 +509,7 @@
         <div class="timeline-event">
           <div class="event-content">
             <div class="event-tag">SPC-001</div>
-            <div class="event-date">09.05.2024</div>
+            <div class="event-date">09.05.2074</div>
             <h3 class="event-title">Alcubierre Metric Verification</h3>
             <p class="event-description">
               First experimental evidence supporting the theoretical feasibility
@@ -503,6 +536,12 @@
         </div>
         <div class="binary" style="top: 80%; right: 8%">
           01000110 01110101 01110100 01110101 01110010 01100101
+        </div>
+
+        <!-- Timeline terminator -->
+        <div class="timeline-terminator">
+          <div class="terminator-dot"></div>
+          <div class="terminator-text">End of Timeline</div>
         </div>
       </div>
     </div>
@@ -617,6 +656,7 @@
       // Check if elements are visible on scroll - only reveal when user scrolls
       function checkVisibility() {
         const events = document.querySelectorAll(".timeline-event");
+        const terminator = document.querySelector(".timeline-terminator");
 
         events.forEach((event, index) => {
           const position = event.getBoundingClientRect();
@@ -677,6 +717,16 @@
             }
           }
         });
+
+        // Check terminator visibility
+        if (terminator) {
+          const position = terminator.getBoundingClientRect();
+          if (position.top < window.innerHeight * 0.9 && position.bottom > 0) {
+            terminator.classList.add("visible");
+          } else {
+            terminator.classList.remove("visible");
+          }
+        }
       }
 
       // Initialize
@@ -700,7 +750,7 @@
         instruction.style.bottom = "20px";
         instruction.style.left = "50%";
         instruction.style.transform = "translateX(-50%)";
-        instruction.style.background = "rgba(16, 16, 24, 0.8)";
+        instruction.style.background = "rgba(16, 16, 74, 0.8)";
         instruction.style.color = "var(--accent-color)";
         instruction.style.padding = "10px 20px";
         instruction.style.borderRadius = "4px";
@@ -734,6 +784,9 @@
             createSnakePattern();
           }, 300);
         });
+
+        // Remove fixed height from body
+        document.body.style.minHeight = "auto";
       });
 
       // Check visibility on scroll
