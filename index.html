@@ -1,26 +1,743 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intelligent Snaking Timeline</title>
+    <style>
+      :root {
+        --bg-color: #0c0c0f;
+        --text-color: rgba(255, 255, 255, 0.85);
+        --accent-color: #64ffda;
+        --line-color: rgba(100, 255, 218, 0.3);
+        --dot-color: rgba(100, 255, 218, 0.8);
+        --card-bg: rgba(16, 16, 24, 0.8);
+        --timeline-width: 2px;
+      }
 
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Projects</title>
-	<link rel="stylesheet" href="css/styles.css">
-</head>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "SF Mono", "Fira Code", Monaco, "Courier New", monospace;
+      }
 
-<body>
-	<div class="container">
-		<h1>Projects & Practice</h1>
-		<ul>
-			<li><a href="/projects/maps/index.html">Maps</a></li>
-			<li><a href="/projects/type/index.html">Typography & Palettes: Lust, Dolly</a></li>
-			<li><a href="/projects/PES/index.html">PES: Product Engagement Score</a></li>
-			<li><a href="/projects/reports/index.html">Reports: Sparkline Table</a></li>
-		</ul>
-	</div>
-</body>
-<script src="/js/index.js"></script>
-</body>
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        min-height: 500vh;
+        padding: 0;
+        overflow-x: hidden;
+      }
 
+      .container {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 100px 20px;
+      }
+
+      .timeline {
+        position: relative;
+        width: 100%;
+      }
+
+      .timeline-line {
+        position: absolute;
+        width: var(--timeline-width);
+        background: var(--line-color);
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        height: 100%;
+        z-index: 1;
+      }
+
+      .timeline-event {
+        position: relative;
+        padding: 80px 0;
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+      }
+
+      .timeline-event.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Add staggered timing to events being revealed */
+      .timeline-event:nth-child(1).visible {
+        transition-delay: 0.1s;
+      }
+      .timeline-event:nth-child(2).visible {
+        transition-delay: 0.2s;
+      }
+      .timeline-event:nth-child(3).visible {
+        transition-delay: 0.3s;
+      }
+      .timeline-event:nth-child(4).visible {
+        transition-delay: 0.4s;
+      }
+      .timeline-event:nth-child(5).visible {
+        transition-delay: 0.5s;
+      }
+      .timeline-event:nth-child(6).visible {
+        transition-delay: 0.6s;
+      }
+      .timeline-event:nth-child(7).visible {
+        transition-delay: 0.7s;
+      }
+      .timeline-event:nth-child(8).visible {
+        transition-delay: 0.8s;
+      }
+      .timeline-event:nth-child(9).visible {
+        transition-delay: 0.9s;
+      }
+
+      .timeline-event:nth-child(odd) .event-content {
+        margin-left: auto;
+        margin-right: 60px;
+        text-align: right;
+      }
+
+      .timeline-event:nth-child(even) .event-content {
+        margin-left: 60px;
+        margin-right: auto;
+        text-align: left;
+      }
+
+      .event-content {
+        position: relative;
+        width: calc(50% - 40px);
+        padding: 20px;
+        background: var(--card-bg);
+        border-radius: 4px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        border-left: 2px solid var(--accent-color);
+        z-index: 3;
+      }
+
+      .event-date {
+        font-size: 0.7rem;
+        color: var(--accent-color);
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+        opacity: 0.9;
+      }
+
+      .event-title {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+        color: white;
+        letter-spacing: -0.3px;
+      }
+
+      .event-description {
+        font-size: 0.7rem;
+        line-height: 1.5;
+        opacity: 0.8;
+        max-width: 320px;
+        margin: 0 auto;
+      }
+
+      .dot {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background: var(--dot-color);
+        border-radius: 50%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        box-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
+      }
+
+      .dot::before {
+        content: "";
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        border: 1px solid var(--line-color);
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+
+      .timeline-event.visible .dot::before {
+        opacity: 1;
+        animation: pulse 2s infinite;
+      }
+
+      /* Snake pattern for the timeline line */
+      .snake-segment {
+        position: absolute;
+        width: 30px;
+        height: var(--timeline-width);
+        background: var(--line-color);
+        z-index: 1;
+        opacity: 0; /* Start hidden */
+        transition: opacity 0.8s ease-out;
+      }
+
+      .horizontal-segment {
+        width: 60px;
+        left: 50%;
+      }
+
+      .horizontal-segment.left {
+        transform: translateX(-100%);
+      }
+
+      .horizontal-segment.right {
+        transform: translateX(0%);
+      }
+
+      /* Make snake segments visible when event is visible */
+      .timeline-event.visible ~ .snake-segment {
+        opacity: 1;
+      }
+
+      .event-tag {
+        position: absolute;
+        font-size: 0.6rem;
+        color: var(--accent-color);
+        background: rgba(16, 16, 24, 0.9);
+        padding: 2px 6px;
+        border-radius: 2px;
+        border: 1px solid rgba(100, 255, 218, 0.2);
+      }
+
+      .timeline-event:nth-child(odd) .event-tag {
+        right: -30px;
+        top: 10px;
+      }
+
+      .timeline-event:nth-child(even) .event-tag {
+        left: -30px;
+        top: 10px;
+      }
+
+      .data-points {
+        font-size: 0.6rem;
+        margin-top: 8px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      /* Animation */
+      @keyframes pulse {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.8;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.5);
+          opacity: 0.4;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.8;
+        }
+      }
+
+      .mini-graph {
+        display: inline-block;
+        height: 12px;
+        width: 30px;
+        margin-left: 5px;
+        margin-bottom: 4px;
+        vertical-align: bottom;
+      }
+
+      .mini-graph .bar {
+        display: inline-block;
+        width: 2px;
+        background: var(--accent-color);
+        margin-right: 1px;
+        opacity: 0.6;
+        vertical-align: bottom;
+        transform-origin: bottom;
+        height: 0; /* Start with zero height */
+        transition: height 0.5s ease-out;
+      }
+
+      /* Path lines that connect to dots */
+      .path-line {
+        position: absolute;
+        height: 2px;
+        background: var(--line-color);
+        z-index: 2;
+        top: 50%;
+        width: 0; /* Start with 0 width */
+        transition: width 0.8s ease-out;
+      }
+
+      .timeline-event.visible .path-line {
+        width: 60px; /* Expand to full width when visible */
+      }
+
+      .timeline-event:nth-child(odd) .path-line {
+        right: calc(50% + 6px);
+        transform-origin: right center;
+      }
+
+      .timeline-event:nth-child(even) .path-line {
+        left: calc(50% + 6px);
+        transform-origin: left center;
+      }
+
+      /* Binary decoration */
+      .binary {
+        position: absolute;
+        font-size: 0.5rem;
+        color: rgba(100, 255, 218, 0.15);
+        z-index: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="timeline">
+        <div class="timeline-line"></div>
+
+        <!-- Event Start -->
+        <div class="timeline-event">
+          <div class="event-content">
+            <div class="event-tag">HAM-666</div>
+            <div class="event-date">07.04.2075</div>
+            <h3 class="event-title">Daniel Hamilton</h3>
+            <p class="event-description">
+              Superconductor of Interface Dynamics via interdisciplinary
+              research in Quantum Computing and Artificial Intelligence.
+            </p>
+            <div class="data-points">
+              <div>Correlation: 99.7%</div>
+              <div>
+                Efficiency gain: 10047% <span class="mini-graph"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dot"></div>
+          <div class="path-line"></div>
+        </div>
+
+        <!-- Event 1 -->
+        <div class="timeline-event">
+          <div class="event-content">
+            <div class="event-tag">QNT-004</div>
+            <div class="event-date">01.02.2075</div>
+            <h3 class="event-title">Quantum Information Theory</h3>
+            <p class="event-description">
+              First experimental demonstration of non-locality in quantum
+              entanglement across macroscopic distances exceeding 100km.
+            </p>
+            <div class="data-points">
+              Correlation: 98.8% <span class="mini-graph"></span>
+            </div>
+          </div>
+          <div class="dot"></div>
+          <div class="path-line"></div>
+        </div>
+
+        <!-- Event 2 -->
+        <div class="timeline-event">
+          <div class="event-content">
+            <div class="event-tag">AI-276</div>
+            <div class="event-date">03.17.2075</div>
+            <h3 class="event-title">Neural Architecture Self-Modification</h3>
+            <p class="event-description">
+              Breakthrough in self-modifying neural networks capable of
+              optimizing their own architecture for specific problem domains.
+            </p>
+            <div class="data-points">
+              Efficiency gain: 147% <span class="mini-graph"></span>
+            </div>
+          </div>
+          <div class="dot"></div>
+          <div class="path-line"></div>
+        </div>
+
+        <!-- Event 3 -->
+        <div class="timeline-event">
+          <div class="event-content">
+            <div class="event-tag">BIO-098</div>
+            <div class="event-date">05.22.2075</div>
+            <h3 class="event-title">Synthetic Minimal Cell Protocol</h3>
+            <p class="event-description">
+              Development of a fully synthetic minimal cell capable of
+              replication with only 382 genes, demonstrating principles of
+              artificial life.
+            </p>
+            <div class="data-points">
+              Replication rate: 42hr <span class="mini-graph"></span>
+            </div>
+          </div>
+          <div class="dot"></div>
+          <div class="path-line"></div>
+        </div>
+
+        <!-- Event 4 -->
+        <div class="timeline-event">
+          <div class="event-content">
+            <div class="event-tag">PHY-127</div>
+            <div class="event-date">08.04.2075</div>
+            <h3 class="event-title">Room Temperature Superconductivity</h3>
+            <p class="event-description">
+              Discovery of carbon-based material exhibiting superconductivity at
+              standard atmospheric pressure and ambient temperature.
+            </p>
+            <div class="data-points">
+              Critical temp: 293K <span class="mini-graph"></span>
+            </div>
+          </div>
+          <div class="dot"></div>
+          <div class="path-line"></div>
+        </div>
+
+        <!-- Event 5 -->
+        <div class="timeline-event">
+          <div class="event-content">
+            <div class="event-tag">NET-355</div>
+            <div class="event-date">10.19.2075</div>
+            <h3 class="event-title">Quantum Internet Protocol</h3>
+            <p class="event-description">
+              Implementation of the first quantum internet backbone connecting
+              seven research facilities with quantum-secured communications.
+            </p>
+            <div class="data-points">
+              Entanglement: 99.9% <span class="mini-graph"></span>
+            </div>
+          </div>
+          <div class="dot"></div>
+          <div class="path-line"></div>
+        </div>
+
+        <!-- Event 6 -->
+        <div class="timeline-event">
+          <div class="event-content">
+            <div class="event-tag">COG-471</div>
+            <div class="event-date">01.07.2024</div>
+            <h3 class="event-title">Bidirectional Neural Interface</h3>
+            <p class="event-description">
+              First high-bandwidth neural interface allowing both reading and
+              writing to neural tissue with single-neuron precision.
+            </p>
+            <div class="data-points">
+              Bandwidth: 1.2TB/s <span class="mini-graph"></span>
+            </div>
+          </div>
+          <div class="dot"></div>
+          <div class="path-line"></div>
+        </div>
+
+        <!-- Event 7 -->
+        <div class="timeline-event">
+          <div class="event-content">
+            <div class="event-tag">MAT-603</div>
+            <div class="event-date">03.28.2024</div>
+            <h3 class="event-title">Programmable Matter</h3>
+            <p class="event-description">
+              Development of microscale robots capable of collective
+              self-assembly into macroscopic functional structures.
+            </p>
+            <div class="data-points">
+              Resolution: 5µm <span class="mini-graph"></span>
+            </div>
+          </div>
+          <div class="dot"></div>
+          <div class="path-line"></div>
+        </div>
+
+        <!-- Event 8 -->
+        <div class="timeline-event">
+          <div class="event-content">
+            <div class="event-tag">ENR-892</div>
+            <div class="event-date">06.12.2024</div>
+            <h3 class="event-title">Fusion Breakthrough</h3>
+            <p class="event-description">
+              First sustained fusion reaction producing net positive energy over
+              a 72-hour continuous operation period.
+            </p>
+            <div class="data-points">
+              Q-factor: 1.73 <span class="mini-graph"></span>
+            </div>
+          </div>
+          <div class="dot"></div>
+          <div class="path-line"></div>
+        </div>
+
+        <!-- Event 9 -->
+        <div class="timeline-event">
+          <div class="event-content">
+            <div class="event-tag">SPC-001</div>
+            <div class="event-date">09.05.2024</div>
+            <h3 class="event-title">Alcubierre Metric Verification</h3>
+            <p class="event-description">
+              First experimental evidence supporting the theoretical feasibility
+              of space-time metric manipulation for FTL travel.
+            </p>
+            <div class="data-points">
+              Energy req: 10^25J <span class="mini-graph"></span>
+            </div>
+          </div>
+          <div class="dot"></div>
+          <div class="path-line"></div>
+        </div>
+
+        <div class="binary" style="top: 15%; left: 10%">
+          01001010 01101111 01110101 01110010 01101110 01100101 01111001
+        </div>
+        <div class="binary" style="top: 35%; right: 5%">
+          01000100 01101001 01110011 01100011 01101111 01110110 01100101
+          01110010 01111001
+        </div>
+        <div class="binary" style="top: 60%; left: 7%">
+          01001001 01101110 01101110 01101111 01110110 01100001 01110100
+          01101001 01101111 01101110
+        </div>
+        <div class="binary" style="top: 80%; right: 8%">
+          01000110 01110101 01110100 01110101 01110010 01100101
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Generate mini graphs
+      document.querySelectorAll(".mini-graph").forEach((graph) => {
+        const bars = 10;
+        // Pre-create bars but don't animate them yet
+        for (let i = 0; i < bars; i++) {
+          const bar = document.createElement("span");
+          bar.className = "bar";
+          const height = Math.floor(5 + Math.random() * 7);
+          bar.dataset.height = height + "px";
+          graph.appendChild(bar);
+        }
+      });
+
+      // Function to animate the mini graphs
+      function animateMiniGraph(graph) {
+        if (graph.dataset.animated === "true") return;
+
+        const bars = graph.querySelectorAll(".bar");
+        bars.forEach((bar, i) => {
+          setTimeout(() => {
+            bar.style.height = bar.dataset.height;
+          }, i * 50);
+        });
+
+        graph.dataset.animated = "true";
+      }
+
+      // Function to reset mini graph animation
+      function resetMiniGraph(graph) {
+        const bars = graph.querySelectorAll(".bar");
+        bars.forEach((bar) => {
+          bar.style.height = "0";
+        });
+        graph.dataset.animated = "false";
+      }
+
+      // Create snake pattern for the timeline
+      function createSnakePattern() {
+        const timeline = document.querySelector(".timeline");
+        const events = document.querySelectorAll(".timeline-event");
+
+        // Remove any existing snake segments first
+        document
+          .querySelectorAll(".snake-segment")
+          .forEach((seg) => seg.remove());
+
+        // Create segments between adjacent events
+        for (let i = 0; i < events.length - 1; i++) {
+          const currentEvent = events[i];
+          const nextEvent = events[i + 1];
+
+          // Get positions
+          const currentRect = currentEvent.getBoundingClientRect();
+          const currentIsEven = i % 2 === 0; // 0-indexed, so even index is odd in visual order
+          const nextIsEven = (i + 1) % 2 === 0;
+
+          // Calculate the midpoint between the two events
+          const currentMid = currentEvent.offsetTop + currentRect.height / 2;
+          const nextMid =
+            nextEvent.offsetTop + nextEvent.getBoundingClientRect().height / 2;
+
+          // Create horizontal segment at the current event
+          const horizontalSegment = document.createElement("div");
+          horizontalSegment.className = `snake-segment horizontal-segment ${
+            currentIsEven ? "right" : "left"
+          }`;
+          horizontalSegment.style.top = `${currentMid}px`;
+          horizontalSegment.dataset.associatedEvent = i;
+          timeline.appendChild(horizontalSegment);
+
+          // We only need vertical segments if we're moving between sides (odd to even or even to odd)
+          if (currentIsEven !== nextIsEven) {
+            // Create vertical segment connecting to the next event
+            const verticalSegment = document.createElement("div");
+            verticalSegment.className = "snake-segment";
+            // Set position and size for vertical segment
+            verticalSegment.style.height = `${nextMid - currentMid}px`;
+            verticalSegment.style.top = `${currentMid}px`;
+
+            // Position based on whether we're going from left to right or right to left
+            verticalSegment.style.left = currentIsEven
+              ? "calc(50% + 60px)"
+              : "calc(50% - 60px)";
+            verticalSegment.style.width = "2px";
+            verticalSegment.dataset.associatedEvent = i;
+
+            timeline.appendChild(verticalSegment);
+          }
+        }
+
+        // Add the final horizontal segment for the last event
+        const lastEvent = events[events.length - 1];
+        const lastRect = lastEvent.getBoundingClientRect();
+        const lastIsEven = (events.length - 1) % 2 === 0;
+
+        const lastHorizontalSegment = document.createElement("div");
+        lastHorizontalSegment.className = `snake-segment horizontal-segment ${
+          lastIsEven ? "right" : "left"
+        }`;
+        lastHorizontalSegment.style.top = `${
+          lastEvent.offsetTop + lastRect.height / 2
+        }px`;
+        lastHorizontalSegment.dataset.associatedEvent = events.length - 1;
+        timeline.appendChild(lastHorizontalSegment);
+      }
+
+      // Check if elements are visible on scroll - only reveal when user scrolls
+      function checkVisibility() {
+        const events = document.querySelectorAll(".timeline-event");
+
+        events.forEach((event, index) => {
+          const position = event.getBoundingClientRect();
+
+          // If the element is in the viewport
+          if (position.top < window.innerHeight * 0.9 && position.bottom > 0) {
+            event.classList.add("visible");
+
+            // Animate path lines from center outward with slight delay
+            const pathLine = event.querySelector(".path-line");
+            if (pathLine) {
+              // Reset path line animation
+              pathLine.style.width = "0";
+
+              // Force browser reflow
+              void pathLine.offsetWidth;
+
+              // Trigger animation with a slight delay
+              setTimeout(() => {
+                pathLine.style.transition = "width 0.8s ease-out";
+                pathLine.style.width = "60px";
+              }, 300);
+            }
+
+            // Show snake segments associated with this event
+            document
+              .querySelectorAll(
+                `.snake-segment[data-associated-event="${index}"]`
+              )
+              .forEach((seg) => {
+                seg.style.opacity = "1";
+              });
+
+            // Animate mini graph after a delay
+            const miniGraph = event.querySelector(".mini-graph");
+            if (miniGraph) {
+              setTimeout(() => {
+                animateMiniGraph(miniGraph);
+              }, 600); // Delay after path line animation
+            }
+          } else if (position.top > window.innerHeight || position.bottom < 0) {
+            // Remove visibility when scrolled out of view
+            event.classList.remove("visible");
+
+            // Hide snake segments associated with this event
+            document
+              .querySelectorAll(
+                `.snake-segment[data-associated-event="${index}"]`
+              )
+              .forEach((seg) => {
+                seg.style.opacity = "0";
+              });
+
+            // Reset mini graph animation
+            const miniGraph = event.querySelector(".mini-graph");
+            if (miniGraph) {
+              resetMiniGraph(miniGraph);
+            }
+          }
+        });
+      }
+
+      // Initialize
+      window.addEventListener("load", () => {
+        createSnakePattern();
+        // Don't auto-check visibility on load - wait for user to scroll
+
+        // Add animation to the timeline line
+        const timelineLine = document.querySelector(".timeline-line");
+        timelineLine.style.height = "0";
+        timelineLine.style.transition = "height 3s ease-out";
+
+        setTimeout(() => {
+          timelineLine.style.height = "100%";
+        }, 100);
+
+        // Initial instruction to encourage scrolling
+        const container = document.querySelector(".container");
+        const instruction = document.createElement("div");
+        instruction.style.position = "fixed";
+        instruction.style.bottom = "20px";
+        instruction.style.left = "50%";
+        instruction.style.transform = "translateX(-50%)";
+        instruction.style.background = "rgba(16, 16, 24, 0.8)";
+        instruction.style.color = "var(--accent-color)";
+        instruction.style.padding = "10px 20px";
+        instruction.style.borderRadius = "4px";
+        instruction.style.fontSize = "0.7rem";
+        instruction.style.textAlign = "center";
+        instruction.style.zIndex = "100";
+        instruction.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.3)";
+        instruction.style.border = "1px solid rgba(100, 255, 218, 0.2)";
+        instruction.innerHTML = "Scroll to reveal timeline events";
+        container.appendChild(instruction);
+
+        // Hide instruction after first scroll
+        window.addEventListener(
+          "scroll",
+          function hideInstruction() {
+            instruction.style.opacity = "0";
+            instruction.style.transition = "opacity 0.5s ease";
+            setTimeout(() => {
+              instruction.remove();
+            }, 500);
+            window.removeEventListener("scroll", hideInstruction);
+          },
+          { once: true }
+        );
+
+        // Handle window resize to recalculate snake pattern
+        window.addEventListener("resize", function () {
+          // Add debounce for performance
+          if (this.resizeTimeout) clearTimeout(this.resizeTimeout);
+          this.resizeTimeout = setTimeout(function () {
+            createSnakePattern();
+          }, 300);
+        });
+      });
+
+      // Check visibility on scroll
+      window.addEventListener("scroll", checkVisibility);
+    </script>
+  </body>
 </html>
