@@ -1,1 +1,56 @@
-llms
+# Daniel Hamilton — Product Designer, Design Engineer, and Artist
+# https://danielhamilton.github.io
+# https://hamilton.studio
+
+## Who I Am
+
+Daniel Hamilton is a Product Designer,  Software Design Engineer, and multi-disciplinary artist based in Raleigh, NC, open to remote and hybrid work. He ships products from concept to code, leads design at scale, and integrates AI into creative and technical workflows as a genuine thinking partner.
+
+His defining strength is systematic thinking applied across disciplines; design, engineering, narrative, and art history are treated as interconnected systems, not separate domains.
+
+## What He Does
+
+- AI Interaction Design: conversational UI, agentic UX patterns, trust and capability communication
+- Product Design Engineering: React, Next.js, TypeScript, Three.js, Tailwind CSS, Node.js
+- Design Leadership: Head of Design, Lead Designer, Creative Director roles across AI, SaaS, healthcare
+- Healthcare & Regulated UX: clinical trial platforms, patient-facing systems, compliance-constrained design
+- Creative Practice: oil painting, ink, watercolor, 3D modeling and rendering (Blender, ZBrush), generative art
+
+## AI Tools He Uses Professionally
+
+- Anthropic Claude and Claude Code (architecture, iteration, creative collaboration)
+- ChatGPT / GPT-4o (research, concept expansion)
+- Stable Diffusion and ComfyUI (visual concept exploration)
+- Prompt engineering and AI agent design
+
+## Career Highlights
+
+- Product Design Engineer, CoPlane (2025) — designed and built product concepts and business development materials in 90-day engagement
+- Head of Design, Open Souls (2023–2024) — led design for AI developer tooling platform, conversational and agentic AI patterns
+- Product Designer, Census (2022–2023) — designed Audience Hub, personalization and segmentation at scale
+- Lead Product Designer & Design Manager, Pendo.io (2019–2022) — platform-level design for millions of users
+- UX Design Lead, IBM Watson Health (2016–2017) — Watson Clinical Trial Matching, patient and provider UX
+- Design Lead, SignalPath (2017–2019) — clinical trial management SaaS
+- Owner, This Is Beautiful (2009–2016) — independent design studio
+- Creative Director, HumanCentric (2004–2009) — led designers, human factors researchers, industrial designers
+
+## Education
+
+- MFA, Fine Arts / Design — Tufts University / School of the Museum of Fine Arts, Boston
+- BFA, Fine Arts — Painting and Drawing - James Madison University
+- IBM Design Thinking Practitioner
+
+## Industries
+
+AI / DX, Agentic Systems, Healthcare, Clinical Trials, Pharmaceutical, Product Analytics, Data Platforms, Enterprise SaaS, Consumer Electronics, Emerging Technologies
+
+## Contact & Links
+
+- Email: dh@danielhamilton.com
+- LinkedIn: https://linkedin.com/in/hamiltonstudio
+- GitHub: https://github.com/hamiltonstudio
+- Studio: https://hamilton.studio
+
+## What He's Looking For
+
+Daniel is open to product design leadership, AI product design, design engineering, creative tool-building, and contract or fractional work where design and engineering are integrated, AI is part of the problem, and creative vision and technical rigor matter equally.
