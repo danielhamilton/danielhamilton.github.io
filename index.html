@@ -1,796 +1,619 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Superconductor of Interface Dynamics</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <title>Daniel Hamilton — Designer-Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-      :root {
-        --bg-color: #0c0c0f;
-        --text-color: rgba(255, 255, 255, 0.85);
-        --accent-color: #64ffda;
-        --line-color: rgba(100, 255, 218, 0.3);
-        --dot-color: rgba(100, 255, 218, 0.8);
-        --card-bg: rgba(40, 40, 55, 0.3);
-        --timeline-width: 2px;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "SF Mono", "Fira Code", Monaco, "Courier New", monospace;
-      }
-
-      body {
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        min-height: 500vh;
-        padding: 0;
-        overflow-x: hidden;
-      }
-
-      .container {
-        position: relative;
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 100px 20px;
-      }
-
-      .timeline {
-        position: relative;
-        width: 100%;
-      }
-
-      .timeline-line {
-        position: absolute;
-        width: var(--timeline-width);
-        background: var(--line-color);
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        height: 100%;
-        z-index: 1;
-      }
-
-      .timeline-event {
-        position: relative;
-        padding: 80px 0;
-        opacity: 0;
-        transform: translateY(40px);
-        transition: opacity 0.7s ease, transform 0.7s ease;
-      }
-
-      .timeline-event.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      /* Add staggered timing to events being revealed */
-      .timeline-event:nth-child(1).visible {
-        transition-delay: 0.1s;
-      }
-      .timeline-event:nth-child(2).visible {
-        transition-delay: 0.2s;
-      }
-      .timeline-event:nth-child(3).visible {
-        transition-delay: 0.3s;
-      }
-      .timeline-event:nth-child(4).visible {
-        transition-delay: 0.4s;
-      }
-      .timeline-event:nth-child(5).visible {
-        transition-delay: 0.5s;
-      }
-      .timeline-event:nth-child(6).visible {
-        transition-delay: 0.6s;
-      }
-      .timeline-event:nth-child(7).visible {
-        transition-delay: 0.7s;
-      }
-      .timeline-event:nth-child(8).visible {
-        transition-delay: 0.8s;
-      }
-      .timeline-event:nth-child(9).visible {
-        transition-delay: 0.9s;
-      }
-
-      .timeline-event:nth-child(odd) .event-content {
-        margin-left: auto;
-        margin-right: 60px;
-        text-align: right;
-      }
-
-      .timeline-event:nth-child(even) .event-content {
-        margin-left: 60px;
-        margin-right: auto;
-        text-align: left;
-      }
-
-      .event-content {
-        position: relative;
-        width: calc(50% - 40px);
-        padding: 20px;
-        background: var(--card-bg);
-        border-radius: 4px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        border-left: 2px solid var(--accent-color);
-        z-index: 3;
-      }
-
-      .event-date {
-        font-size: 0.7rem;
-        color: var(--accent-color);
-        letter-spacing: 1px;
-        margin-bottom: 5px;
-        opacity: 0.9;
-      }
-
-      .event-title {
-        font-size: 0.9rem;
-        margin-bottom: 8px;
-        color: white;
-        letter-spacing: -0.3px;
-      }
-
-      .event-description {
-        font-size: 0.7rem;
-        line-height: 1.5;
-        opacity: 0.8;
-        max-width: 320px;
-        margin: 0 auto;
-      }
-
-      .dot {
-        position: absolute;
-        width: 12px;
-        height: 12px;
-        background: var(--dot-color);
-        border-radius: 50%;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 2;
-        box-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
-      }
-
-      .dot::before {
-        content: "";
-        position: absolute;
-        width: 74px;
-        height: 74px;
-        border: 1px solid var(--line-color);
-        border-radius: 50%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        opacity: 0;
-        transition: opacity 0.3s ease, transform 0.3s ease;
-      }
-
-      .timeline-event.visible .dot::before {
-        opacity: 1;
-        animation: pulse 2s infinite;
-      }
-
-      /* Snake pattern for the timeline line */
-      .snake-segment {
-        position: absolute;
-        width: 30px;
-        height: var(--timeline-width);
-        background: var(--line-color);
-        z-index: 1;
-        opacity: 0; /* Start hidden */
-        transition: opacity 0.8s ease-out;
-      }
-
-      .horizontal-segment {
-        width: 60px;
-        left: 50%;
-      }
-
-      .horizontal-segment.left {
-        transform: translateX(-100%);
-      }
-
-      .horizontal-segment.right {
-        transform: translateX(0%);
-      }
-
-      /* Make snake segments visible when event is visible */
-      .timeline-event.visible ~ .snake-segment {
-        opacity: 1;
-      }
-
-      .event-tag {
-        position: absolute;
-        font-size: 0.6rem;
-        color: var(--accent-color);
-        background: rgba(16, 16, 74, 0.9);
-        padding: 2px 6px;
-        border-radius: 2px;
-        border: 1px solid rgba(100, 255, 218, 0.2);
-      }
-
-      .timeline-event:nth-child(odd) .event-tag {
-        right: -30px;
-        top: 10px;
-      }
-
-      .timeline-event:nth-child(even) .event-tag {
-        left: -30px;
-        top: 10px;
-      }
-
-      .data-points {
-        font-size: 0.6rem;
-        margin-top: 8px;
-        color: rgba(255, 255, 255, 0.5);
-      }
-
-      /* Animation */
-      @keyframes pulse {
-        0% {
-          transform: translate(-50%, -50%) scale(1);
-          opacity: 0.8;
+        :root {
+            color-scheme: dark;
+            --ink: #e8e8e4;
+            --muted: #888880;
+            --faint: #2a2a28;
+            --bg: #141412;
+            --white: #1c1c1a;
+            --gold: #c9a84c;
+            --gold-light: #1f1c14;
         }
-        50% {
-          transform: translate(-50%, -50%) scale(1.5);
-          opacity: 0.4;
+        :root.light {
+            color-scheme: light;
+            --ink: #1c1c1a;
+            --muted: #6b6b66;
+            --faint: #e8e8e4;
+            --bg: #f9f9f6;
+            --white: #ffffff;
+            --gold: #b8962e;
+            --gold-light: #f5eddb;
         }
-        100% {
-          transform: translate(-50%, -50%) scale(1);
-          opacity: 0.8;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        html { background: var(--bg); }
+        body {
+            font-family: "Libre Baskerville", Georgia, serif;
+            background: var(--bg);
+            color: var(--ink);
+            font-size: 17px;
+            line-height: 1.75;
         }
-      }
+        .wrap { max-width: 1000px; margin: 0 auto; padding: 0 48px; }
+        @media (max-width: 700px) { .wrap { padding: 0 24px; } }
 
-      .mini-graph {
-        display: inline-block;
-        height: 12px;
-        width: 30px;
-        margin-left: 5px;
-        margin-bottom: 4px;
-        vertical-align: bottom;
-      }
+        /* Nav */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(20,20,18,0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--faint);
+            padding: 16px 0;
+        }
+        nav .wrap { display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            color: var(--ink);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .nav-logo:hover { opacity: 0.7; }
+        .nav-logo svg { display: block; }
+        .nav-name {
+            font-family: "DM Sans", sans-serif;
+            font-weight: 600; font-size: 15px;
+            letter-spacing: 0.04em; text-transform: uppercase;
+            color: var(--ink);
+        }
+        .nav-links { display: flex; gap: 28px; list-style: none; }
+        .nav-links a {
+            font-family: "DM Sans", sans-serif;
+            font-size: 13px; font-weight: 500;
+            letter-spacing: 0.05em; text-transform: uppercase;
+            color: var(--muted); text-decoration: none; transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--gold); }
+        :root.light nav { background: rgba(249,249,246,0.94); }
+        @media (max-width: 600px) { .nav-links { display: none; } }
 
-      .mini-graph .bar {
-        display: inline-block;
-        width: 2px;
-        background: var(--accent-color);
-        margin-right: 1px;
-        opacity: 0.6;
-        vertical-align: bottom;
-        transform-origin: bottom;
-        height: 0; /* Start with zero height */
-        transition: height 0.5s ease-out;
-      }
+        /* Hero */
+        .hero { padding: 100px 0 80px; border-bottom: 1px solid var(--faint); }
+        .hero-eyebrow {
+            font-family: "DM Sans", sans-serif;
+            font-size: 12px; font-weight: 600;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-family: "Libre Baskerville", serif;
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 700; line-height: 1.12;
+            letter-spacing: -0.02em; margin-bottom: 28px; max-width: 14ch;
+        }
+        .hero h1 em { font-style: italic; color: var(--muted); }
+        .hero-bio {
+            font-size: 18px; color: var(--muted);
+            max-width: 56ch; line-height: 1.8; margin-bottom: 40px;
+        }
+        .hero-links { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+        .btn {
+            display: inline-block;
+            font-family: "DM Sans", sans-serif;
+            font-size: 13px; font-weight: 600;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            padding: 12px 24px; text-decoration: none; transition: all 0.2s ease;
+        }
+        .btn-primary { background: var(--ink); color: var(--bg); }
+        .btn-primary:hover { background: var(--gold); }
+        .btn-ghost { border: 1px solid var(--faint); color: var(--muted); }
+        .btn-ghost:hover { border-color: var(--ink); color: var(--ink); }
 
-      /* Path lines that connect to dots */
-      .path-line {
-        position: absolute;
-        height: 2px;
-        background: var(--line-color);
-        z-index: 2;
-        top: 50%;
-        width: 0; /* Start with 0 width */
-        transition: width 0.8s ease-out;
-      }
+        /* Sections */
+        section { padding: 80px 0; border-bottom: 1px solid var(--faint); }
+        .section-label {
+            font-family: "DM Sans", sans-serif;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 40px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .section-label::after { content: ""; flex: 1; height: 1px; background: var(--faint); }
+        h2 {
+            font-family: "Libre Baskerville", serif;
+            font-size: clamp(24px, 3.5vw, 36px);
+            font-weight: 700; letter-spacing: -0.015em;
+            line-height: 1.2; margin-bottom: 16px;
+        }
+        .section-intro {
+            font-size: 16px; color: var(--muted);
+            max-width: 60ch; margin-bottom: 48px; line-height: 1.8;
+        }
 
-      .timeline-event.visible .path-line {
-        width: 60px; /* Expand to full width when visible */
-      }
+        /* Skills grid */
+        .skills-columns {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            border: 1px solid var(--faint); background: var(--faint); gap: 1px;
+        }
+        @media (max-width: 800px) { .skills-columns { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 500px) { .skills-columns { grid-template-columns: 1fr; } }
+        .skill-group { padding: 32px 28px; background: var(--white); }
+        .skill-group-label {
+            font-family: "DM Sans", sans-serif;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 16px;
+        }
+        .skill-group ul { list-style: none; }
+        .skill-group li {
+            font-family: "DM Sans", sans-serif;
+            font-size: 14px; color: var(--ink);
+            padding: 6px 0; border-bottom: 1px solid var(--faint); line-height: 1.4;
+        }
+        .skill-group li:last-child { border-bottom: none; }
 
-      .timeline-event:nth-child(odd) .path-line {
-        right: calc(50% + 6px);
-        transform-origin: right center;
-      }
+        /* Competencies */
+        .competency-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 1px; background: var(--faint); border: 1px solid var(--faint);
+        }
+        @media (max-width: 640px) { .competency-grid { grid-template-columns: 1fr; } }
+        .competency-card { background: var(--white); padding: 36px 32px; transition: background 0.2s; }
+        .competency-card:hover { background: var(--gold-light); }
+        .competency-card h3 {
+            font-family: "DM Sans", sans-serif;
+            font-size: 16px; font-weight: 600; margin-bottom: 10px; color: var(--ink);
+        }
+        .competency-card p {
+            font-family: "DM Sans", sans-serif;
+            font-size: 14px; color: var(--muted); line-height: 1.75; margin: 0;
+        }
 
-      .timeline-event:nth-child(even) .path-line {
-        left: calc(50% + 6px);
-        transform-origin: left center;
-      }
+        /* Experience */
+        .experience-list { border: 1px solid var(--faint); background: var(--white); }
+        .exp-item {
+            display: grid; grid-template-columns: 1fr auto;
+            gap: 24px; padding: 20px 32px;
+            border-bottom: 1px solid var(--faint);
+            align-items: center; transition: background 0.2s;
+        }
+        .exp-item:hover { background: var(--gold-light); }
+        .exp-item:last-child { border-bottom: none; }
+        .exp-company {
+            font-family: "DM Sans", sans-serif;
+            font-size: 15px; font-weight: 600; color: var(--ink);
+            display: block; margin-bottom: 2px;
+        }
+        .exp-role {
+            font-family: "DM Sans", sans-serif;
+            font-size: 13px; font-weight: 400; color: var(--muted);
+        }
+        .exp-period {
+            font-family: "DM Sans", sans-serif;
+            font-size: 12px; color: var(--muted);
+            white-space: nowrap; letter-spacing: 0.02em;
+        }
+        @media (max-width: 640px) { .exp-item { grid-template-columns: 1fr; gap: 4px; } }
 
-      /* Binary decoration */
-      .binary {
-        position: absolute;
-        font-size: 0.5rem;
-        color: rgba(100, 255, 218, 0.15);
-        z-index: 0;
-      }
+        /* Domain tags */
+        .domain-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 2rem; }
+        .domain-tag {
+            font-family: "DM Sans", sans-serif;
+            font-size: 13px; font-weight: 500;
+            padding: 8px 16px; border: 1px solid var(--faint);
+            background: var(--white); color: var(--ink);
+            transition: all 0.2s; cursor: default;
+        }
+        .domain-tag:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 
-      /* Timeline terminator styles */
-      .timeline-terminator {
-        position: relative;
-        margin-top: 80px;
-        text-align: center;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.7s ease, transform 0.7s ease;
-      }
+        /* Looking for */
+        .looking-for-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 12px; margin-top: 2rem;
+        }
+        @media (max-width: 600px) { .looking-for-grid { grid-template-columns: 1fr; } }
+        .lf-item {
+            display: flex; gap: 14px; align-items: flex-start;
+            padding: 18px 22px; background: var(--white); border: 1px solid var(--faint);
+        }
+        .lf-arrow { color: var(--gold); font-size: 16px; margin-top: 2px; flex-shrink: 0; font-family: "DM Sans", sans-serif; }
+        .lf-text { font-family: "DM Sans", sans-serif; font-size: 14px; color: var(--ink); line-height: 1.6; }
 
-      .timeline-terminator.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
+        /* Education */
+        .edu-list { border: 1px solid var(--faint); background: var(--white); }
+        .edu-item {
+            display: flex; justify-content: space-between;
+            align-items: baseline; gap: 32px;
+            padding: 18px 32px; border-bottom: 1px solid var(--faint); flex-wrap: wrap;
+        }
+        .edu-item:last-child { border-bottom: none; }
+        .edu-degree { font-family: "DM Sans", sans-serif; font-size: 15px; font-weight: 500; color: var(--ink); }
+        .edu-school { font-family: "DM Sans", sans-serif; font-size: 13px; color: var(--muted); }
 
-      .terminator-dot {
-        width: 20px;
-        height: 20px;
-        background: var(--accent-color);
-        border-radius: 50%;
-        margin: 0 auto;
-        position: relative;
-        box-shadow: 0 0 20px rgba(100, 255, 218, 0.8);
-      }
+        /* Footer */
+        footer { padding: 64px 0; background: #0c0c0a; }
+        footer .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
+        .footer-left h3 {
+            font-family: "Libre Baskerville", serif;
+            font-size: 22px; font-weight: 700; margin-bottom: 6px; color: var(--ink);
+        }
+        .footer-left p { font-family: "DM Sans", sans-serif; font-size: 13px; color: var(--muted); margin: 0; }
+        .footer-right { display: flex; gap: 20px; }
+        .footer-link {
+            font-family: "DM Sans", sans-serif;
+            font-size: 13px; font-weight: 500;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            color: var(--muted); text-decoration: none; transition: color 0.2s;
+        }
+        .footer-link:hover { color: var(--gold); }
 
-      .terminator-text {
-        margin-top: 20px;
-        color: var(--accent-color);
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-      }
+        /* Animations */
+        .fade-in { opacity: 0; transform: translateY(16px); animation: fadeUp 0.7s ease forwards; }
+        .fade-in:nth-child(1) { animation-delay: 0.05s; }
+        .fade-in:nth-child(2) { animation-delay: 0.15s; }
+        .fade-in:nth-child(3) { animation-delay: 0.25s; }
+        .fade-in:nth-child(4) { animation-delay: 0.35s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* Theme toggle */
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--faint);
+            color: var(--muted);
+            font-family: "DM Sans", sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .theme-toggle:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        .theme-toggle .icon { font-size: 13px; }
+
+        /* Smooth theme transitions */
+        *, *::before, *::after {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+        /* But not animations */
+        .fade-in { transition: none; }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="timeline">
-        <div class="timeline-line"></div>
+</head>
+<body>
 
-        <!-- Event Start -->
-        <div class="timeline-event">
-          <div class="event-content">
-            <div class="event-tag">HAM-666</div>
-            <div class="event-date">07.04.2075</div>
-            <h3 class="event-title">Daniel Hamilton</h3>
-            <p class="event-description">
-              Superconductor of Interface Dynamics via interdisciplinary
-              research in Quantum Computing and Artificial Intelligence.
-            </p>
-            <div class="data-points">
-              <div>Correlation: 99.7%</div>
-              <div>
-                Efficiency gain: 10047% <span class="mini-graph"></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="dot"></div>
-          <div class="path-line"></div>
-        </div>
-
-        <!-- Event 1 -->
-        <div class="timeline-event">
-          <div class="event-content">
-            <div class="event-tag">QNT-004</div>
-            <div class="event-date">01.02.2075</div>
-            <h3 class="event-title">Quantum Information Theory</h3>
-            <p class="event-description">
-              First experimental demonstration of non-locality in quantum
-              entanglement across macroscopic distances exceeding 100km.
-            </p>
-            <div class="data-points">
-              Correlation: 98.8% <span class="mini-graph"></span>
-            </div>
-          </div>
-          <div class="dot"></div>
-          <div class="path-line"></div>
-        </div>
-
-        <!-- Event 2 -->
-        <div class="timeline-event">
-          <div class="event-content">
-            <div class="event-tag">AI-276</div>
-            <div class="event-date">03.17.2075</div>
-            <h3 class="event-title">Neural Architecture Self-Modification</h3>
-            <p class="event-description">
-              Breakthrough in self-modifying neural networks capable of
-              optimizing their own architecture for specific problem domains.
-            </p>
-            <div class="data-points">
-              Efficiency gain: 147% <span class="mini-graph"></span>
-            </div>
-          </div>
-          <div class="dot"></div>
-          <div class="path-line"></div>
-        </div>
-
-        <!-- Event 3 -->
-        <div class="timeline-event">
-          <div class="event-content">
-            <div class="event-tag">BIO-098</div>
-            <div class="event-date">05.22.2075</div>
-            <h3 class="event-title">Synthetic Minimal Cell Protocol</h3>
-            <p class="event-description">
-              Development of a fully synthetic minimal cell capable of
-              replication with only 382 genes, demonstrating principles of
-              artificial life.
-            </p>
-            <div class="data-points">
-              Replication rate: 42hr <span class="mini-graph"></span>
-            </div>
-          </div>
-          <div class="dot"></div>
-          <div class="path-line"></div>
-        </div>
-
-        <!-- Event 4 -->
-        <div class="timeline-event">
-          <div class="event-content">
-            <div class="event-tag">PHY-127</div>
-            <div class="event-date">08.04.2075</div>
-            <h3 class="event-title">Room Temperature Superconductivity</h3>
-            <p class="event-description">
-              Discovery of carbon-based material exhibiting superconductivity at
-              standard atmospheric pressure and ambient temperature.
-            </p>
-            <div class="data-points">
-              Critical temp: 293K <span class="mini-graph"></span>
-            </div>
-          </div>
-          <div class="dot"></div>
-          <div class="path-line"></div>
-        </div>
-
-        <!-- Event 5 -->
-        <div class="timeline-event">
-          <div class="event-content">
-            <div class="event-tag">NET-355</div>
-            <div class="event-date">10.19.2075</div>
-            <h3 class="event-title">Quantum Internet Protocol</h3>
-            <p class="event-description">
-              Implementation of the first quantum internet backbone connecting
-              seven research facilities with quantum-secured communications.
-            </p>
-            <div class="data-points">
-              Entanglement: 99.9% <span class="mini-graph"></span>
-            </div>
-          </div>
-          <div class="dot"></div>
-          <div class="path-line"></div>
-        </div>
-
-        <!-- Event 6 -->
-        <div class="timeline-event">
-          <div class="event-content">
-            <div class="event-tag">COG-471</div>
-            <div class="event-date">01.07.2074</div>
-            <h3 class="event-title">Bidirectional Neural Interface</h3>
-            <p class="event-description">
-              First high-bandwidth neural interface allowing both reading and
-              writing to neural tissue with single-neuron precision.
-            </p>
-            <div class="data-points">
-              Bandwidth: 1.2TB/s <span class="mini-graph"></span>
-            </div>
-          </div>
-          <div class="dot"></div>
-          <div class="path-line"></div>
-        </div>
-
-        <!-- Event 7 -->
-        <div class="timeline-event">
-          <div class="event-content">
-            <div class="event-tag">MAT-603</div>
-            <div class="event-date">03.28.2074</div>
-            <h3 class="event-title">Programmable Matter</h3>
-            <p class="event-description">
-              Development of microscale robots capable of collective
-              self-assembly into macroscopic functional structures.
-            </p>
-            <div class="data-points">
-              Resolution: 5µm <span class="mini-graph"></span>
-            </div>
-          </div>
-          <div class="dot"></div>
-          <div class="path-line"></div>
-        </div>
-
-        <!-- Event 8 -->
-        <div class="timeline-event">
-          <div class="event-content">
-            <div class="event-tag">ENR-892</div>
-            <div class="event-date">06.12.2074</div>
-            <h3 class="event-title">Fusion Breakthrough</h3>
-            <p class="event-description">
-              First sustained fusion reaction producing net positive energy over
-              a 72-hour continuous operation period.
-            </p>
-            <div class="data-points">
-              Q-factor: 1.73 <span class="mini-graph"></span>
-            </div>
-          </div>
-          <div class="dot"></div>
-          <div class="path-line"></div>
-        </div>
-
-        <!-- Event 9 -->
-        <div class="timeline-event">
-          <div class="event-content">
-            <div class="event-tag">SPC-001</div>
-            <div class="event-date">09.05.2074</div>
-            <h3 class="event-title">Alcubierre Metric Verification</h3>
-            <p class="event-description">
-              First experimental evidence supporting the theoretical feasibility
-              of space-time metric manipulation for FTL travel.
-            </p>
-            <div class="data-points">
-              Energy req: 10^25J <span class="mini-graph"></span>
-            </div>
-          </div>
-          <div class="dot"></div>
-          <div class="path-line"></div>
-        </div>
-
-        <div class="binary" style="top: 15%; left: 10%">
-          01001010 01101111 01110101 01110010 01101110 01100101 01111001
-        </div>
-        <div class="binary" style="top: 35%; right: 5%">
-          01000100 01101001 01110011 01100011 01101111 01110110 01100101
-          01110010 01111001
-        </div>
-        <div class="binary" style="top: 60%; left: 7%">
-          01001001 01101110 01101110 01101111 01110110 01100001 01110100
-          01101001 01101111 01101110
-        </div>
-        <div class="binary" style="top: 80%; right: 8%">
-          01000110 01110101 01110100 01110101 01110010 01100101
-        </div>
-
-        <!-- Timeline terminator -->
-        <div class="timeline-terminator">
-          <div class="terminator-dot"></div>
-          <div class="terminator-text">Beginning of Time</div>
-        </div>
-      </div>
+<nav>
+    <div class="wrap">
+        <a href="#" class="nav-logo" aria-label="Daniel Hamilton"><svg width="120" height="25" viewBox="0 0 1626 341" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M364.73 335C369.95 330.31 374.98 326.18 379.48 321.54C380.84 320.15 381.25 317.37 381.25 315.22C381.36 282.73 381.33 250.22 381.33 217.73C381.33 152.73 381.36 87.73 381.42 22.73C381.42 18.68 380.42 15.88 377.03 13.5C372.33 10.18 368.03 6.34999 362.51 1.93999C365.25 1.70999 366.64 1.48999 368.04 1.47999C388.04 1.47999 408.04 1.61999 428.04 1.34999C432.63 1.28999 434.22 3.03999 435.53 7.11999C454.197 65.28 472.937 123.403 491.75 181.49C492.31 183.22 492.99 184.9 494.06 187.84C494.93 185.16 495.52 183.57 495.97 181.94C511.97 123.713 527.937 65.4667 543.87 7.19999C545.12 2.58999 546.99 1.28999 551.64 1.34999C571.47 1.62999 591.31 1.46999 611.14 1.46999H616.08L616.68 2.58999C612.91 5.34999 609.4 8.58999 605.31 10.77C598.01 14.62 596.41 20.23 596.43 28.21C596.73 123.383 596.763 218.55 596.53 313.71C596.53 318.11 597.53 321.2 601.25 323.81C606.25 327.36 610.85 331.46 616.7 336.2H523.6C525.22 334.69 526.27 333.2 527.69 332.45C540.34 325.38 543.07 314.77 542.88 300.6C542.04 237.78 542.51 174.94 542.51 112.11V106.65L541.43 106.43C521.07 183.33 500.713 260.233 480.36 337.14L479.15 337.2C454.483 256.88 429.817 176.547 405.15 96.2L404.15 96.37V100.66C404.15 171.993 404.12 243.327 404.06 314.66C403.949 316.458 404.287 318.255 405.045 319.889C405.803 321.524 406.956 322.943 408.4 324.02C412.83 327.63 416.92 331.65 422.17 336.42H271.88C277.83 331.57 282.64 327.42 287.71 323.58C290.71 321.29 292.12 319.2 291.35 314.93C288.59 299.54 286.35 284.04 284.18 268.56C283.76 265.67 282.73 264.56 279.78 264.56C265.113 264.66 250.447 264.66 235.78 264.56C233.03 264.56 231.69 265.2 231.24 268.32C228.89 284.63 226.14 300.88 223.84 317.19C223.6 318.85 224.93 321.19 226.26 322.53C230.85 327.02 235.77 331.17 241.54 336.32H0C3.58 333.23 6.06 330.41 9.13 328.56C17.48 323.56 19.34 316.46 19.3 306.93C18.93 212.43 19.05 117.93 19.15 23.44C19.15 19.6 18.21 16.95 15.08 14.58C10.19 10.89 5.69 6.67999 0.15 1.92999H183.44C177.74 6.78999 172.86 11.16 167.74 15.22C166.617 16.0318 165.719 17.1156 165.129 18.3698C164.54 19.6239 164.278 21.0073 164.37 22.39C164.457 120.05 164.457 217.717 164.37 315.39C164.37 318.72 165.29 320.92 167.98 322.93C173.32 326.93 178.38 331.23 183.77 335.58C189.14 330.78 194.52 326.3 199.47 321.38C200.94 319.92 201.62 317.32 201.96 315.13C209.607 265.797 217.2 216.463 224.74 167.13C231.9 120.41 238.92 73.67 246.28 26.98C247.407 20.7619 246.907 14.3582 244.83 8.38999C244.11 6.38999 243.64 4.30999 242.96 1.94999C244.238 1.73004 245.526 1.57981 246.82 1.49999C262.15 1.49999 277.48 1.54999 292.82 1.42999C295.94 1.42999 297.07 2.42999 297.56 5.56999C305.107 54.59 312.743 103.59 320.47 152.57C327.337 196.457 334.227 240.347 341.14 284.24C342.84 295.09 344.47 305.96 346.29 316.79C346.538 318.541 347.329 320.171 348.55 321.45C353.64 326 359 330.21 364.73 335ZM73.73 176.67C73.5347 177.691 73.3978 178.723 73.32 179.76C73.32 225.587 73.32 271.417 73.32 317.25C73.3576 318.844 74.0139 320.361 75.15 321.48C79.99 325.55 84.97 329.48 90.15 333.13C90.8654 333.475 91.6533 333.642 92.4471 333.618C93.2409 333.594 94.0172 333.378 94.71 332.99C98.71 330.05 102.31 326.48 106.32 323.52C109.32 321.3 110.32 318.77 110.32 315.07C110.2 270.91 110.173 226.747 110.24 182.58C110.24 181.58 110.58 180.36 110.13 179.63C109.42 178.47 108.19 176.82 107.13 176.8C96.19 176.58 85.21 176.65 73.74 176.65L73.73 176.67ZM92 2.55999C86.16 7.37999 80.46 11.93 75 16.74C73.9249 17.9316 73.3391 19.4852 73.36 21.09C73.27 63.89 73.31 106.68 73.23 149.48C73.23 152.69 74.23 153.91 77.51 153.86C86.84 153.72 96.16 153.68 105.51 153.86C109.24 153.95 110.34 152.64 110.33 148.96C110.22 106.49 110.33 64.03 110.19 21.57C110.19 19.91 109.67 17.73 108.55 16.7C103.29 11.91 97.74 7.40999 92 2.55999ZM257.35 96.56L256.53 96.74L235.41 241.33H280C272.38 192.75 264.88 144.66 257.38 96.58L257.35 96.56Z" fill="currentColor"/><path d="M1199.51 0C1292.64 0 1368.42 75.39 1368.4 168.11C1368.4 262.11 1292.68 338.03 1198.95 337.98C1104.71 337.93 1029.71 263.1 1029.95 169.33C1030.04 124.408 1047.94 81.3541 1079.72 49.6108C1111.51 17.8676 1154.59 0.0263928 1199.51 0ZM1163.4 303.54C1171.33 302.64 1179.4 302.28 1187.17 300.76C1234.09 291.63 1270.67 266.05 1299 228.41C1324.1 195.06 1337.73 157.79 1331.94 115.41C1328.04 86.86 1314.2 63.93 1289.18 48.82C1262.37 32.62 1233.31 31.2 1203.74 38.55C1157.68 49.99 1122.32 77.2 1095.52 115.66C1073.52 147.2 1061.65 181.97 1066.46 221.02C1069.28 243.96 1078.69 263.78 1096.17 279.31C1115.31 296.34 1138.25 302.84 1163.4 303.54Z" fill="currentColor"/><path d="M1415.63 87.28V92.18C1415.63 163.353 1415.6 234.517 1415.54 305.67C1415.54 309.67 1416.61 312.5 1419.71 315.11C1426.6 320.9 1433.18 327.04 1439.87 333.11C1440.78 333.94 1441.56 334.93 1442.95 336.45H1365.51L1374.24 328.45C1380.47 322.69 1389.05 317.99 1392.24 310.87C1395.37 303.93 1393.08 294.51 1393.08 286.18C1393.08 210.353 1393.04 134.523 1392.97 58.69C1392.89 55.271 1391.92 51.9319 1390.16 49C1381.64 34.82 1372.72 21 1364 6.99999C1363 5.49999 1362.23 3.90999 1360.85 1.46999H1366.96C1386.29 1.46999 1405.63 1.60999 1424.96 1.35999C1429.36 1.29999 1431.69 2.58999 1433.82 6.55999C1463.22 61.4733 1492.74 116.317 1522.38 171.09L1525.86 177.51C1526.15 175.983 1526.36 174.44 1526.49 172.89C1526.49 125.56 1526.56 78.23 1526.37 30.89C1526.19 28.1902 1525.03 25.6493 1523.11 23.74C1515.57 16.52 1507.66 9.73999 1498.97 1.88999H1576.23C1574.82 3.38999 1573.86 4.54999 1572.75 5.54999C1566.2 11.47 1559.75 17.55 1552.96 23.16C1549.84 25.73 1549.24 28.58 1549.24 32.28C1549.31 131.613 1549.33 230.947 1549.3 330.28V336.19L1547.98 336.68C1504.21 253.44 1460.45 170.213 1416.71 87L1415.63 87.28Z" fill="currentColor"/><path d="M1002.17 336.38H912.36C915.36 333.47 917.42 330.93 919.99 329.21C928.27 323.66 930.25 316.21 930.21 306.35C929.8 214.35 929.97 122.35 929.97 30.35V23.92C920.12 23.92 910.84 23.79 901.56 24.08C900.38 24.08 898.86 26.21 898.18 27.67C892.6 39.76 887.18 51.93 881.7 64.07C880.919 66.0158 879.814 67.8148 878.43 69.39V1.69C880.14 1.61 881.92 1.46 883.69 1.46C932.52 1.46 981.35 1.52 1030.19 1.34C1034.99 1.34 1036.41 2.61 1036.34 7.46C1036.08 26.62 1036.23 45.79 1036.23 64.95V69.38L1035.23 69.78C1034.5 68.6872 1033.83 67.5555 1033.23 66.39C1027.48 53.65 1021.64 40.94 1016.11 28.1C1014.7 24.82 1012.88 23.69 1009.38 23.8C1001.26 24.04 993.12 23.88 984.52 23.88C984.37 26.26 984.15 28.2 984.15 30.13C984.15 124.963 984.117 219.793 984.05 314.62C984.05 318.69 985.23 321.48 988.36 324.01C992.79 327.6 996.9 331.63 1002.17 336.38Z" fill="currentColor"/><path d="M832.29 1.87C825.78 6.94 820.36 11.32 814.74 15.44C813.637 16.1306 812.74 17.1046 812.142 18.2602C811.544 19.4158 811.267 20.7108 811.34 22.01C811.42 117.817 811.447 213.627 811.42 309.44C811.42 310.76 811.54 312.08 811.64 314.16C821.37 314.16 830.98 314.29 840.57 314C841.78 314 843.36 311.89 844.03 310.43C849.83 297.89 855.44 285.27 861.13 272.68C861.79 271.23 862.58 269.85 863.97 267.15C864.21 269.81 864.42 271.03 864.42 272.25C864.42 292.25 864.36 312.25 864.5 332.25C864.5 335.73 863.43 336.83 859.95 336.82C820.95 336.72 781.95 336.76 742.95 336.74C741.87 336.74 740.79 336.54 738.27 336.3C744.09 331.3 749.14 327.35 753.68 322.87C755.589 321.01 756.767 318.526 757 315.87C757.173 218.063 757.173 120.253 757 22.44C756.797 19.7676 755.644 17.2561 753.75 15.36C749.15 10.85 744.02 6.88 738.19 1.92L832.29 1.87Z" fill="currentColor"/><path d="M720.68 336.42H629L628.27 335.49C631.84 332.49 635.14 329.07 639.04 326.61C645.54 322.5 647.16 317.07 647.14 309.53C646.873 214.39 646.84 119.253 647.04 24.12C647.04 19.91 646.04 16.96 642.57 14.41C637.63 10.83 633.11 6.66999 627.37 1.89999H720.37C714.52 6.77999 709.27 10.77 704.55 15.3C702.609 17.1668 701.415 19.6765 701.19 22.36C701.017 120.167 701.017 217.973 701.19 315.78C701.425 318.446 702.623 320.934 704.56 322.78C709.31 327.34 714.55 331.32 720.68 336.42Z" fill="currentColor"/><path d="M1574.43 314.65L1600.28 289.39C1608.55 297.66 1617.2 306.33 1625.51 314.63C1617.01 323.17 1608.38 331.82 1600 340.23L1574.43 314.65Z" fill="currentColor"/></svg></a>
+        <ul class="nav-links">
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#competencies">Expertise</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
     </div>
+</nav>
+
+<header class="hero">
+    <div class="wrap">
+        <p class="hero-eyebrow fade-in">Designer-Engineer &middot; Raleigh, NC &middot; Open to Remote</p>
+        <h1 class="fade-in">Design, Code,<br><em>and Art</em><br>as one practice.</h1>
+        <p class="hero-bio fade-in">I ship products from concept to code, lead design at scale, and integrate AI into creative and technical work as a genuine thinking partner. My strength is systematic thinking applied across disciplines&mdash;design, engineering, narrative, and art history are not separate worlds.</p>
+        <div class="hero-links fade-in">
+            <a href="mailto:dh@danielhamilton.com" class="btn btn-primary">Get in Touch</a>
+            <a href="https://linkedin.com/in/hamiltonstudio" target="_blank" class="btn btn-ghost">LinkedIn</a>
+            <a href="https://github.com/hamiltonstudio" target="_blank" class="btn btn-ghost">GitHub</a>
+            <a href="https://hamilton.studio" target="_blank" class="btn btn-ghost">hamilton.studio</a>
+        </div>
+    </div>
+</header>
+
+<section id="skills">
+    <div class="wrap">
+        <div class="section-label">Skills &amp; Tools</div>
+        <h2>What I Work With</h2>
+        <p class="section-intro">A comprehensive view of tools, technologies, and practices across design, engineering, AI, and creative work.</p>
+        <div class="skills-columns">
+            <div class="skill-group">
+                <div class="skill-group-label">UX &amp; Design</div>
+                <ul>
+                    <li>UX Design</li>
+                    <li>UI Design</li>
+                    <li>Interaction Design</li>
+                    <li>User Experience</li>
+                    <li>User-centered Design</li>
+                    <li>User Research</li>
+                    <li>Usability Testing</li>
+                    <li>Heuristic Evaluation</li>
+                    <li>Information Design</li>
+                    <li>Information Architecture</li>
+                    <li>Experience Design</li>
+                    <li>Concept Design</li>
+                    <li>Wireframing</li>
+                    <li>Prototyping</li>
+                    <li>Design Systems</li>
+                    <li>Typography</li>
+                    <li>Layout</li>
+                    <li>Visual Design</li>
+                    <li>Industrial Design</li>
+                    <li>Design Management</li>
+                    <li>Onboarding + Enrollment</li>
+                    <li>Search + Personalization</li>
+                </ul>
+            </div>
+            <div class="skill-group">
+                <div class="skill-group-label">AI &amp; Emerging Tech</div>
+                <ul>
+                    <li>AI Interaction Design</li>
+                    <li>Conversational UI</li>
+                    <li>Agentic UX Patterns</li>
+                    <li>Anthropic Claude</li>
+                    <li>Claude Code</li>
+                    <li>ChatGPT / GPT-4o</li>
+                    <li>Stable Diffusion</li>
+                    <li>ComfyUI</li>
+                    <li>AI Workflow Integration</li>
+                    <li>Prompt Engineering</li>
+                    <li>AI Agent Design</li>
+                    <li>AI-Assisted Prototyping</li>
+                </ul>
+            </div>
+            <div class="skill-group">
+                <div class="skill-group-label">Engineering</div>
+                <ul>
+                    <li>React / Next.js</li>
+                    <li>Vue.js</li>
+                    <li>Nuxt.js</li>
+                    <li>TypeScript</li>
+                    <li>Tailwind CSS</li>
+                    <li>HTML / CSS</li>
+                    <li>Three.js</li>
+                    <li>Node.js</li>
+                    <li>Web Audio API</li>
+                    <li>Motion / Framer Motion</li>
+                    <li>Vercel</li>
+                    <li>Software Development</li>
+                </ul>
+            </div>
+            <div class="skill-group">
+                <div class="skill-group-label">Design Tools</div>
+                <ul>
+                    <li>Figma</li>
+                    <li>Blender</li>
+                    <li>ZBrush</li>
+                    <li>Procreate</li>
+                    <li>DaVinci Resolve</li>
+                    <li>Adobe Creative Suite</li>
+                    <li>ComfyUI</li>
+                    <li>Rive</li>
+                    <li>Framer</li>
+                </ul>
+            </div>
+            <div class="skill-group">
+                <div class="skill-group-label">Leadership &amp; Process</div>
+                <ul>
+                    <li>Design Leadership</li>
+                    <li>Creative Direction</li>
+                    <li>Mentorship + Coaching</li>
+                    <li>Cross-functional Facilitation</li>
+                    <li>IBM Design Thinking</li>
+                    <li>Agile Methodologies</li>
+                    <li>Design Sprint</li>
+                    <li>Hiring + Team Building</li>
+                    <li>Problem Solving</li>
+                    <li>Industry Knowledge</li>
+                </ul>
+            </div>
+            <div class="skill-group">
+                <div class="skill-group-label">Creative Practice</div>
+                <ul>
+                    <li>Oil Painting</li>
+                    <li>Ink &amp; Watercolor</li>
+                    <li>Acrylic &amp; Mixed Media</li>
+                    <li>3D Modeling &amp; Rendering</li>
+                    <li>Generative Aesthetics</li>
+                    <li>Narrative Development</li>
+                    <li>Visual Systems Design</li>
+                    <li>Art Historical Research</li>
+                </ul>
+            </div>
+        </div>
+        </div>
+</section>
+
+<section id="competencies">
+    <div class="wrap">
+        <div class="section-label">Core Competencies</div>
+        <h2>What I Bring to the Work</h2>
+        <p class="section-intro">Pattern-level strengths that show up across every project and role.</p>
+        <div class="competency-grid">
+            <div class="competency-card">
+                <h3>AI-Native Collaboration</h3>
+                <p>I integrate AI tools into creative and technical workflows as thinking partners&mdash;strategically, not reactively. I understand where AI genuinely augments work versus where it interrupts it.</p>
+            </div>
+            <div class="competency-card">
+                <h3>Design &times; Engineering Integration</h3>
+                <p>I move fluently between design and code. Design decisions inform engineering and vice versa. I don&rsquo;t hand off&mdash;I build alongside.</p>
+            </div>
+            <div class="competency-card">
+                <h3>Systems Thinking Across Domains</h3>
+                <p>I see structural connections between design systems, data architecture, narrative, and art history. Better solutions come from understanding the whole system.</p>
+            </div>
+            <div class="competency-card">
+                <h3>Healthcare &amp; Regulated Environments</h3>
+                <p>Deep experience designing under compliance constraints for clinical trials, pharma, and patient-facing systems. Rigor and empathy, not either/or.</p>
+            </div>
+            <div class="competency-card">
+                <h3>Onboarding &amp; Progressive Complexity</h3>
+                <p>I specialize in making overwhelming systems approachable&mdash;introducing complexity gradually through clear mental models and well-timed guidance.</p>
+            </div>
+            <div class="competency-card">
+                <h3>Team Leadership &amp; Mentorship</h3>
+                <p>I lead by sharing the spotlight. I build design culture, coach craft, and create optimistic work environments where teams do their best work.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="experience">
+    <div class="wrap">
+        <div class="section-label">Experience</div>
+        <h2>Where I&rsquo;ve Worked</h2>
+        <p class="section-intro">Roles across AI, SaaS, healthcare, and enterprise product design.</p>
+        <div class="experience-list">
+            <div class="exp-item">
+                <div><span class="exp-company">CoPlane</span><span class="exp-role">Product Design Engineer</span></div>
+                <span class="exp-period">2025</span>
+            </div>
+            <div class="exp-item">
+                <div><span class="exp-company">Open Souls</span><span class="exp-role">Head of Design</span></div>
+                <span class="exp-period">2023&ndash;2024</span>
+            </div>
+            <div class="exp-item">
+                <div><span class="exp-company">Census</span><span class="exp-role">Product Designer</span></div>
+                <span class="exp-period">2022&ndash;2023</span>
+            </div>
+            <div class="exp-item">
+                <div><span class="exp-company">Pendo.io</span><span class="exp-role">Lead Product Designer &amp; Design Manager</span></div>
+                <span class="exp-period">2019&ndash;2022</span>
+            </div>
+            <div class="exp-item">
+                <div><span class="exp-company">IBM Watson Health</span><span class="exp-role">UX Design Lead, Clinical Trial Matching</span></div>
+                <span class="exp-period">2016&ndash;2017</span>
+            </div>
+            <div class="exp-item">
+                <div><span class="exp-company">SignalPath</span><span class="exp-role">Design Lead</span></div>
+                <span class="exp-period">2017&ndash;2019</span>
+            </div>
+            <div class="exp-item">
+                <div><span class="exp-company">This Is Beautiful</span><span class="exp-role">Owner / UX Designer</span></div>
+                <span class="exp-period">2009&ndash;2016</span>
+            </div>
+            <div class="exp-item">
+                <div><span class="exp-company">HumanCentric</span><span class="exp-role">Creative Director &amp; Principal Designer</span></div>
+                <span class="exp-period">2004&ndash;2009</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="domains">
+    <div class="wrap">
+        <div class="section-label">Industries &amp; Domains</div>
+        <h2>Where I&rsquo;ve Built</h2>
+        <p class="section-intro">Depth in AI, healthcare, and enterprise SaaS. Breadth across many more.</p>
+        <div class="domain-tags">
+            <span class="domain-tag">AI / DX</span>
+            <span class="domain-tag">Agentic Systems</span>
+            <span class="domain-tag">Healthcare</span>
+            <span class="domain-tag">Clinical Trials</span>
+            <span class="domain-tag">Pharmaceutical</span>
+            <span class="domain-tag">Product Analytics</span>
+            <span class="domain-tag">Data Platforms</span>
+            <span class="domain-tag">Enterprise SaaS</span>
+            <span class="domain-tag">Consumer Electronics</span>
+            <span class="domain-tag">Consumer Products</span>
+            <span class="domain-tag">Government</span>
+            <span class="domain-tag">Automotive</span>
+            <span class="domain-tag">Emerging Technologies</span>
+            <span class="domain-tag">Creative Tools</span>
+        </div>
+    </div>
+</section>
+
+<section id="contact">
+    <div class="wrap">
+        <div class="section-label">What I&rsquo;m Looking For</div>
+        <h2>Let&rsquo;s Work Together</h2>
+        <p class="section-intro">I&rsquo;m open to roles and collaborations where design and engineering are integrated, AI is part of the problem, and creative vision and technical rigor matter equally.</p>
+        <div class="looking-for-grid">
+            <div class="lf-item"><span class="lf-arrow">&rarr;</span><span class="lf-text">Product design leadership where creative vision and technical rigor matter equally</span></div>
+            <div class="lf-item"><span class="lf-arrow">&rarr;</span><span class="lf-text">AI product design focused on interaction patterns and user mental models</span></div>
+            <div class="lf-item"><span class="lf-arrow">&rarr;</span><span class="lf-text">Design engineering roles that move fluidly between design and implementation</span></div>
+            <div class="lf-item"><span class="lf-arrow">&rarr;</span><span class="lf-text">Creative tool-building that serves real creative practice</span></div>
+            <div class="lf-item"><span class="lf-arrow">&rarr;</span><span class="lf-text">Contract or fractional work with focused, meaningful problems</span></div>
+            <div class="lf-item"><span class="lf-arrow">&rarr;</span><span class="lf-text">Teams where thinking out loud and collaborative iteration is valued</span></div>
+        </div>
+    </div>
+</section>
+
+<section id="education" style="border-bottom: none; padding-bottom: 0;">
+    <div class="wrap">
+        <div class="section-label">Education &amp; Certifications</div>
+        <div class="edu-list">
+            <div class="edu-item">
+                <span class="edu-degree">MFA, Fine Arts / Design</span>
+                <span class="edu-school">Tufts University / School of the Museum of Fine Arts, Boston</span>
+            </div>
+            <div class="edu-item">
+                <span class="edu-degree">BFA, Fine Arts &mdash; Painting and Drawing</span>
+                <span class="edu-school"></span>
+            </div>
+            <div class="edu-item">
+                <span class="edu-degree">IBM Design Thinking Practitioner</span>
+                <span class="edu-school">IBM</span>
+            </div>
+            <div class="edu-item">
+                <span class="edu-degree">Pendo Essentials</span>
+                <span class="edu-school">Pendo.io</span>
+            </div>
+            <div class="edu-item">
+                <span class="edu-degree">Data Science Foundations</span>
+                <span class="edu-school"></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="wrap">
+        <div class="footer-left">
+            <h3>Daniel Hamilton</h3>
+            <p>Raleigh, NC &mdash; Open to Remote &mdash; dh@danielhamilton.com</p>
+        </div>
+        <div class="footer-right">
+            <a href="mailto:dh@danielhamilton.com" class="footer-link">Email</a>
+            <a href="https://linkedin.com/in/hamiltonstudio" target="_blank" class="footer-link">LinkedIn</a>
+            <a href="https://github.com/hamiltonstudio" target="_blank" class="footer-link">GitHub</a>
+            <a href="https://hamilton.studio" class="footer-link">Studio</a>
+        </div>
+    </div>
+</footer>
+
 
     <script>
-      // Generate mini graphs
-      document.querySelectorAll(".mini-graph").forEach((graph) => {
-        const bars = 10;
-        // Pre-create bars but don't animate them yet
-        for (let i = 0; i < bars; i++) {
-          const bar = document.createElement("span");
-          bar.className = "bar";
-          const height = Math.floor(5 + Math.random() * 7);
-          bar.dataset.height = height + "px";
-          graph.appendChild(bar);
-        }
-      });
-
-      // Function to animate the mini graphs
-      function animateMiniGraph(graph) {
-        if (graph.dataset.animated === "true") return;
-
-        const bars = graph.querySelectorAll(".bar");
-        bars.forEach((bar, i) => {
-          setTimeout(() => {
-            bar.style.height = bar.dataset.height;
-          }, i * 50);
-        });
-
-        graph.dataset.animated = "true";
-      }
-
-      // Function to reset mini graph animation
-      function resetMiniGraph(graph) {
-        const bars = graph.querySelectorAll(".bar");
-        bars.forEach((bar) => {
-          bar.style.height = "0";
-        });
-        graph.dataset.animated = "false";
-      }
-
-      // Create snake pattern for the timeline
-      function createSnakePattern() {
-        const timeline = document.querySelector(".timeline");
-        const events = document.querySelectorAll(".timeline-event");
-
-        // Remove any existing snake segments first
-        document
-          .querySelectorAll(".snake-segment")
-          .forEach((seg) => seg.remove());
-
-        // Create segments between adjacent events
-        for (let i = 0; i < events.length - 1; i++) {
-          const currentEvent = events[i];
-          const nextEvent = events[i + 1];
-
-          // Get positions
-          const currentRect = currentEvent.getBoundingClientRect();
-          const currentIsEven = i % 2 === 0; // 0-indexed, so even index is odd in visual order
-          const nextIsEven = (i + 1) % 2 === 0;
-
-          // Calculate the midpoint between the two events
-          const currentMid = currentEvent.offsetTop + currentRect.height / 2;
-          const nextMid =
-            nextEvent.offsetTop + nextEvent.getBoundingClientRect().height / 2;
-
-          // Create horizontal segment at the current event
-          const horizontalSegment = document.createElement("div");
-          horizontalSegment.className = `snake-segment horizontal-segment ${
-            currentIsEven ? "right" : "left"
-          }`;
-          horizontalSegment.style.top = `${currentMid}px`;
-          horizontalSegment.dataset.associatedEvent = i;
-          timeline.appendChild(horizontalSegment);
-
-          // We only need vertical segments if we're moving between sides (odd to even or even to odd)
-          if (currentIsEven !== nextIsEven) {
-            // Create vertical segment connecting to the next event
-            const verticalSegment = document.createElement("div");
-            verticalSegment.className = "snake-segment";
-            // Set position and size for vertical segment
-            verticalSegment.style.height = `${nextMid - currentMid}px`;
-            verticalSegment.style.top = `${currentMid}px`;
-
-            // Position based on whether we're going from left to right or right to left
-            verticalSegment.style.left = currentIsEven
-              ? "calc(50% + 60px)"
-              : "calc(50% - 60px)";
-            verticalSegment.style.width = "2px";
-            verticalSegment.dataset.associatedEvent = i;
-
-            timeline.appendChild(verticalSegment);
-          }
+        function toggleTheme() {
+            const root = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            const label = document.getElementById('theme-label');
+            if (root.classList.contains('light')) {
+                root.classList.remove('light');
+                icon.textContent = '☀';
+                label.textContent = 'Light';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                root.classList.add('light');
+                icon.textContent = '◑';
+                label.textContent = 'Dark';
+                localStorage.setItem('theme', 'light');
+            }
         }
 
-        // Add the final horizontal segment for the last event
-        const lastEvent = events[events.length - 1];
-        const lastRect = lastEvent.getBoundingClientRect();
-        const lastIsEven = (events.length - 1) % 2 === 0;
-
-        const lastHorizontalSegment = document.createElement("div");
-        lastHorizontalSegment.className = `snake-segment horizontal-segment ${
-          lastIsEven ? "right" : "left"
-        }`;
-        lastHorizontalSegment.style.top = `${
-          lastEvent.offsetTop + lastRect.height / 2
-        }px`;
-        lastHorizontalSegment.dataset.associatedEvent = events.length - 1;
-        timeline.appendChild(lastHorizontalSegment);
-      }
-
-      // Check if elements are visible on scroll - only reveal when user scrolls
-      function checkVisibility() {
-        const events = document.querySelectorAll(".timeline-event");
-        const terminator = document.querySelector(".timeline-terminator");
-
-        events.forEach((event, index) => {
-          const position = event.getBoundingClientRect();
-
-          // If the element is in the viewport
-          if (position.top < window.innerHeight * 0.9 && position.bottom > 0) {
-            event.classList.add("visible");
-
-            // Animate path lines from center outward with slight delay
-            const pathLine = event.querySelector(".path-line");
-            if (pathLine) {
-              // Reset path line animation
-              pathLine.style.width = "0";
-
-              // Force browser reflow
-              void pathLine.offsetWidth;
-
-              // Trigger animation with a slight delay
-              setTimeout(() => {
-                pathLine.style.transition = "width 0.8s ease-out";
-                pathLine.style.width = "60px";
-              }, 300);
+        // On load, respect saved preference
+        (function() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'light') {
+                document.documentElement.classList.add('light');
+                document.getElementById('theme-icon').textContent = '◑';
+                document.getElementById('theme-label').textContent = 'Dark';
             }
-
-            // Show snake segments associated with this event
-            document
-              .querySelectorAll(
-                `.snake-segment[data-associated-event="${index}"]`
-              )
-              .forEach((seg) => {
-                seg.style.opacity = "1";
-              });
-
-            // Animate mini graph after a delay
-            const miniGraph = event.querySelector(".mini-graph");
-            if (miniGraph) {
-              setTimeout(() => {
-                animateMiniGraph(miniGraph);
-              }, 600); // Delay after path line animation
-            }
-          } else if (position.top > window.innerHeight || position.bottom < 0) {
-            // Remove visibility when scrolled out of view
-            event.classList.remove("visible");
-
-            // Hide snake segments associated with this event
-            document
-              .querySelectorAll(
-                `.snake-segment[data-associated-event="${index}"]`
-              )
-              .forEach((seg) => {
-                seg.style.opacity = "0";
-              });
-
-            // Reset mini graph animation
-            const miniGraph = event.querySelector(".mini-graph");
-            if (miniGraph) {
-              resetMiniGraph(miniGraph);
-            }
-          }
-        });
-
-        // Check terminator visibility
-        if (terminator) {
-          const position = terminator.getBoundingClientRect();
-          if (position.top < window.innerHeight * 0.9 && position.bottom > 0) {
-            terminator.classList.add("visible");
-          } else {
-            terminator.classList.remove("visible");
-          }
-        }
-      }
-
-      // Initialize
-      window.addEventListener("load", () => {
-        createSnakePattern();
-        // Don't auto-check visibility on load - wait for user to scroll
-
-        // Add animation to the timeline line
-        const timelineLine = document.querySelector(".timeline-line");
-        timelineLine.style.height = "0";
-        timelineLine.style.transition = "height 3s ease-out";
-
-        setTimeout(() => {
-          timelineLine.style.height = "100%";
-        }, 100);
-
-        // Initial instruction to encourage scrolling
-        const container = document.querySelector(".container");
-        const instruction = document.createElement("div");
-        instruction.style.position = "fixed";
-        instruction.style.bottom = "20px";
-        instruction.style.left = "50%";
-        instruction.style.transform = "translateX(-50%)";
-        instruction.style.background = "rgba(16, 16, 74, 0.8)";
-        instruction.style.color = "var(--accent-color)";
-        instruction.style.padding = "10px 20px";
-        instruction.style.borderRadius = "4px";
-        instruction.style.fontSize = "0.7rem";
-        instruction.style.textAlign = "center";
-        instruction.style.zIndex = "100";
-        instruction.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.3)";
-        instruction.style.border = "1px solid rgba(100, 255, 218, 0.2)";
-        instruction.innerHTML = "Scroll to reveal timeline events";
-        container.appendChild(instruction);
-
-        // Hide instruction after first scroll
-        window.addEventListener(
-          "scroll",
-          function hideInstruction() {
-            instruction.style.opacity = "0";
-            instruction.style.transition = "opacity 0.5s ease";
-            setTimeout(() => {
-              instruction.remove();
-            }, 500);
-            window.removeEventListener("scroll", hideInstruction);
-          },
-          { once: true }
-        );
-
-        // Handle window resize to recalculate snake pattern
-        window.addEventListener("resize", function () {
-          // Add debounce for performance
-          if (this.resizeTimeout) clearTimeout(this.resizeTimeout);
-          this.resizeTimeout = setTimeout(function () {
-            createSnakePattern();
-          }, 300);
-        });
-
-        // Remove fixed height from body
-        document.body.style.minHeight = "auto";
-      });
-
-      // Check visibility on scroll
-      window.addEventListener("scroll", checkVisibility);
+        })();
     </script>
-  </body>
+</body>
 </html>
