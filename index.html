@@ -69,8 +69,8 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; background: var(--bg); }
-    body { font-family: var(--sans); background: var(--bg); color: var(--text); font-weight: 300; line-height: 1.7; min-height: 100vh; }
+    html { scroll-behavior: smooth; background: var(--bg); overflow-x: hidden; overflow-x: clip; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); font-weight: 300; line-height: 1.7; min-height: 100vh; overflow-x: hidden; overflow-x: clip; }
 
     /* Nav */
     nav {
@@ -113,7 +113,7 @@
     }
     header::before {
       content: ''; position: absolute; top: -60px; left: -20px;
-      width: 600px; height: 500px;
+      width: min(600px, 100%); height: 500px;
       background: radial-gradient(ellipse, rgba(79,195,161,0.08) 0%, transparent 65%);
       pointer-events: none;
     }
@@ -150,7 +150,6 @@
       margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
     }
     .section-num { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.15em; flex-shrink: 0; }
-    .section-accent { width: 3px; height: 26px; border-radius: 2px; flex-shrink: 0; background: var(--accent); }
     .section-title { font-family: var(--serif); font-size: 1.9rem; font-weight: 400; color: var(--text); line-height: 1.2; }
     .section-intro { font-size: 14px; color: var(--muted); max-width: 60ch; margin-bottom: 28px; line-height: 1.8; }
 
@@ -235,7 +234,7 @@
     .footer-inner { max-width: 960px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
     .footer-name { font-family: var(--serif); font-size: 20px; font-weight: 400; color: var(--text); margin-bottom: 4px; }
     .footer-sub { font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; color: var(--muted); }
-    .footer-links { display: flex; gap: 20px; }
+    .footer-links { display: flex; gap: 12px 20px; flex-wrap: wrap; }
     .footer-link { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
     .footer-link:hover { color: var(--accent); }
 
@@ -306,7 +305,6 @@
   <section class="section" id="competencies">
     <div class="section-header">
       <span class="section-num">01</span>
-      <div class="section-accent"></div>
       <h2 class="section-title">Core Competencies</h2>
     </div>
     <p class="section-intro">Pattern-level strengths that show up across every project and role.</p>
@@ -342,7 +340,6 @@
   <section class="section" id="skills">
     <div class="section-header">
       <span class="section-num">02</span>
-      <div class="section-accent"></div>
       <h2 class="section-title">Skills &amp; Tools</h2>
     </div>
     <p class="section-intro">A comprehensive view of tools, technologies, and practices across design, engineering, AI, and creative work.</p>
@@ -405,7 +402,6 @@
   <section class="section" id="experience">
     <div class="section-header">
       <span class="section-num">03</span>
-      <div class="section-accent"></div>
       <h2 class="section-title">Where I&rsquo;ve Worked</h2>
     </div>
     <p class="section-intro">Creator, founder, and designer &mdash; spanning AI, SaaS, healthcare, and enterprise product design.</p>
@@ -453,7 +449,6 @@
   <section class="section" id="domains">
     <div class="section-header">
       <span class="section-num">04</span>
-      <div class="section-accent"></div>
       <h2 class="section-title">Industries &amp; Domains</h2>
     </div>
     <p class="section-intro">Depth in AI, healthcare, and enterprise SaaS. Breadth across many more.</p>
@@ -479,7 +474,6 @@
   <section class="section" id="contact">
     <div class="section-header">
       <span class="section-num">05</span>
-      <div class="section-accent"></div>
       <h2 class="section-title">Let&rsquo;s Work Together</h2>
     </div>
     <p class="section-intro">Open to roles and collaborations where design and engineering are integrated, AI is part of the problem, and creative vision and technical rigor matter equally.</p>
@@ -500,7 +494,6 @@
   <section class="section" id="education">
     <div class="section-header">
       <span class="section-num">06</span>
-      <div class="section-accent"></div>
       <h2 class="section-title">Education &amp; Credentials</h2>
     </div>
     <table class="data-table">
